@@ -1,7 +1,12 @@
 # target
 
 # STM32
-https://www.sparkfun.com/products/17712
+
+STM32 Peripheral Access Crates:
+- https://github.com/stm32-rs/stm32-rs
+
+STM32F405:
+- https://www.sparkfun.com/products/17712
 
 # STM32 MPU
 
