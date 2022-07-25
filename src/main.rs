@@ -16,7 +16,7 @@ fn init_gpioc_ouput(rcc: &stm::RCC, gpioc: &stm::GPIOC) {
 
     // Bit 0 - IO port C clock enable.
     // No reader is needed, we know what value to write.
-    // Question: why is a closure required here?
+    // Exercise: why is a closure required here?
     rcc.ahb1enr.modify(
         |_, w| {
             w.gpiocen().enabled()
