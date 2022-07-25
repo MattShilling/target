@@ -14,10 +14,12 @@
 STM32 Peripheral Access Crates:
 - https://github.com/stm32-rs/stm32-rs
 
-## STM32F405
+## STM32F405RG
 - https://www.sparkfun.com/products/17712
+    - Embedded 1024 KB flash 
 - https://github.com/stm32-rs/stm32f4xx-hal
 - https://github.com/adamgreig/stm32f4-demo
+- 
 
 
 # STM32 MPU
