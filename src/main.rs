@@ -1,13 +1,13 @@
 #![no_std]
 #![no_main]
 
-// Override panic.
+// Link with panic_halt.
 use panic_halt as _;
 
 use cortex_m_rt::entry;
-use stm32f4::stm32f405::{self, interrupt};
+use stm32f4::stm32f405::{self as stm, interrupt};
 
-fn init_gpioc_ouput(rcc: &stm32f405::RCC, gpioc: &stm32f405::GPIOC) {
+fn init_gpioc_ouput(rcc: &stm::RCC, gpioc: &stm::GPIOC) {
     // Enable the GPIO C clock.
     // Why do we need to enable the GPIO clock?
     // 8.3.10: Output configuration:
@@ -29,11 +29,27 @@ fn init_gpioc_ouput(rcc: &stm32f405::RCC, gpioc: &stm32f405::GPIOC) {
         });
 }
 
-fn init_timer2(rcc: &stm32f405::RCC, tim2: &stm32f405::TIM2) {
+/**
+ * Timer counts up.
+ */
+fn init_timer2(prescale: u16,
+               auto_reload: u32,
+               rcc: &stm::RCC,
+               tim2: &stm::TIM2) {
+    // Enable timer interrupt.
     rcc.apb1enr.modify(|_, w| w.tim2en().enabled());
+    // Enable update interupt. This is triggered when the
+    // timer overflows and resets to 0.
     tim2.dier.write(|w| w.uie().enabled());
-    tim2.psc.write(|w| w.psc().bits(1000));
-    tim2.arr.write(|w| w.arr().bits(2000));
+
+    // Divide counter clock.
+    // 16MHz / prescaler.
+    tim2.psc.write(|w| w.psc().bits(prescale));
+
+    // Count up to auto_reload then reset.
+    tim2.arr.write(|w| w.arr().bits(auto_reload));
+
+    // Start countin'!
     tim2.cr1.write(|w| w.cen().enabled());
 }
 
@@ -41,7 +57,7 @@ fn init_timer2(rcc: &stm32f405::RCC, tim2: &stm32f405::TIM2) {
 fn run() -> ! {
     // Acquire the device peripherals (if they exist). 
     // take() can only be called once.
-    let peripherals = stm32f405::Peripherals::take().unwrap();
+    let peripherals = stm::Peripherals::take().unwrap();
     
     //
     // Setup GPIO to blink our LED.
@@ -50,14 +66,20 @@ fn run() -> ! {
                     &peripherals.GPIOC);
 
     //
-    // Reset and clock control.
-    //
-    init_timer2(&peripherals.RCC,
-               &peripherals.TIM2);
+    // Initialize General-purpose timer 2 (TIM2).
+    // 32-bit timer.
+    // 0.5[s] = reload * (prescale / 16MHz)[s]
+    // 0.5[s] = reload * (1000 / 16Hz)[s]
+    // reload = 0.5[s] / (1000 / 16Hz)[s]
+    // reload = 8000
+    init_timer2(1000,
+                8000,
+                &peripherals.RCC,
+                &peripherals.TIM2);
 
     // Enable the TIM2 interrupt in the Nested vectored interrupt controller (NVIC).
     unsafe {
-        cortex_m::peripheral::NVIC::unmask(stm32f405::Interrupt::TIM2);
+        cortex_m::peripheral::NVIC::unmask(stm::Interrupt::TIM2);
     }
 
     // The main thread can now go to sleep.
@@ -78,12 +100,14 @@ fn TIM2() {
     // https://rust-embedded.github.io/book/concurrency/concurrency.html
 
     // Clear the UIF bit to indicate the interrupt has been serviced
-    unsafe { (*stm32f405::TIM2::ptr()).sr.modify(|_, w| w.uif().clear_bit()) };
+    unsafe {
+        (*stm::TIM2::ptr()).sr.modify(|_, w| w.uif().clear_bit())
+    };
 
-    // Read ODR8 to see if the pin is set, and if so, clear it,
-    // otherwise, set it. We use the atomic BSRR register to
-    // set/reset it without needing to read-modify-write ODR.
-    let ptr = stm32f405::GPIOC::ptr();
+    // Read GPIO C ODR1 to see if the pin is set and flip the output state.
+    // We use the atomic BSRR register to set/reset it without needing to
+    // read-modify-write ODR.
+    let ptr = stm::GPIOC::ptr();
     unsafe {
         if (*ptr).odr.read().odr1().is_high() {
             (*ptr).bsrr.write(|w| w.br1().set_bit());

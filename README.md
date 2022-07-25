@@ -18,6 +18,9 @@
 STM32 Peripheral Access Crates:
 - https://github.com/stm32-rs/stm32-rs
 
+Guides:
+- https://github.com/rust-embedded/cortex-m-quickstart
+
 ## STM32F405RG
 - https://www.sparkfun.com/products/17712
     - Embedded 1024 KB flash 
@@ -37,4 +40,7 @@ Bare Metal:
 
 Rust prospects:
 - https://github.com/geraldstanje/rust-arm-cortex-a9
+
+# Concurrency
+- https://github.com/rtic-rs/cortex-m-rtic
 

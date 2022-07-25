@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # ST32 Cube Programmer expects the executables to have a file extension.
 # We are building ELF executables.
 # - cargo-readobj target/thumbv7em-none-eabihf/debug/target -- --file-headers
