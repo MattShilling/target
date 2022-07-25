@@ -8,6 +8,7 @@
         - `rustup target add thumbv7em-none-eabihf`
         - `cargo install cargo-binutils`
         - `rustup component add llvm-tools-preview` 
+        - `cargo install cargo-generate`
    
 - https://www.st.com/en/development-tools/stm32cubeprog.html
 
