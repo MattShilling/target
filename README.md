@@ -19,7 +19,7 @@ STM32 Peripheral Access Crates:
     - Embedded 1024 KB flash 
 - https://github.com/stm32-rs/stm32f4xx-hal
 - https://github.com/adamgreig/stm32f4-demo
-- 
+- Reference manual: https://www.st.com/resource/en/reference_manual/dm00031020-stm32f405-415-stm32f407-417-stm32f427-437-and-stm32f429-439-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf
 
 
 # STM32 MPU
