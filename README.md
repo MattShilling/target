@@ -4,6 +4,7 @@
 - Rust
     - https://www.rust-lang.org/tools/install
     - https://docs.rust-embedded.org/book/intro/install.html
+    - `rustup target add thumbv7em-none-eabihf`
    
 - https://www.st.com/en/development-tools/stm32cubeprog.html
 
