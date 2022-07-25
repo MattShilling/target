@@ -1,0 +1,33 @@
+[package]
+name = "target"
+version = "0.0.0"
+authors = ["Matt Shilling"]
+edition = "2021"
+
+# [[bin]]
+# name = "app"
+# test = false
+# bench = false
+
+# Cortex-M deps.
+[dependencies]
+# Low level access to Cortex-M processors.
+# https://crates.io/crates/cortex-m
+cortex-m = "0.7.5"
+# Startup code and minimal runtime for Cortex-M microcontrollers.
+# https://crates.io/crates/cortex-m-rt
+cortex-m-rt = "0.7.1"
+# Set the panicking behavior to halt.
+# https://crates.io/crates/panic-halt
+panic-halt = "0.2.0"
+
+# STM32 specific deps.
+[dependencies.stm32f4]
+# https://crates.io/crates/stm32f4
+version = "0.15.1"
+features = ["stm32f405"]
+
+[profile.release]
+codegen-units = 1 # Better optimizations.
+debug = true # Symbols are nice and they don't increase the size on Flash.
+lto = true # Better optimizations.
