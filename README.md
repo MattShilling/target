@@ -6,6 +6,7 @@
     - https://docs.rust-embedded.org/book/intro/install.html
     - https://docs.rust-embedded.org/book/intro/tooling.html
         - `rustup target add thumbv7em-none-eabihf`
+        - `cargo install cargo-binutils`
         - `rustup component add llvm-tools-preview` 
    
 - https://www.st.com/en/development-tools/stm32cubeprog.html
